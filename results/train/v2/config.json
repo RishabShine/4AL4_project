@@ -1,0 +1,43 @@
+{
+  "run": "v2",
+  "alphas": [
+    0.01,
+    0.1,
+    1.0,
+    10.0,
+    100.0,
+    300.0,
+    1000.0,
+    3000.0,
+    10000.0,
+    100000.0
+  ],
+  "training_file_sha256": "f17e63fc46eec6e4d3c5cd855b4392fcd227b529af951102252fec467bceccd1",
+  "training_examples": 390,
+  "feature_columns": [
+    "win_pct_lag1",
+    "off_rating_lag1",
+    "def_rating_lag1",
+    "efg_pct_lag1",
+    "tov_pct_lag1",
+    "orb_pct_lag1",
+    "drb_pct_lag1",
+    "win_pct_lag2",
+    "off_rating_lag2",
+    "def_rating_lag2",
+    "efg_pct_lag2",
+    "tov_pct_lag2",
+    "orb_pct_lag2",
+    "drb_pct_lag2",
+    "win_pct_lag3",
+    "off_rating_lag3",
+    "def_rating_lag3",
+    "efg_pct_lag3",
+    "tov_pct_lag3",
+    "orb_pct_lag3",
+    "drb_pct_lag3",
+    "win_pct_change",
+    "net_rating_change"
+  ],
+  "target_column": "target_win_pct"
+}

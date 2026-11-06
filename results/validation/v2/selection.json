@@ -1,0 +1,10 @@
+{
+  "run": "v2",
+  "model": "ridge_alpha_300",
+  "alpha": 300.0,
+  "selection_metric": "validation_mse",
+  "validation_mse": 0.012878851485173362,
+  "validation_mae": 0.09495591126522254,
+  "validation_examples": 90,
+  "validation_file_sha256": "7f71d31ed5001db328dea1edf00239614de25ff85d2751126728e7b614415240"
+}

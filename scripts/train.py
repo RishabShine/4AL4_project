@@ -1,14 +1,18 @@
 """Fit regression candidates using only the training split.
 
-Run from the project root with: python3 scripts/train.py
+Run from the project root with: python3 scripts/train.py --run v1
 """
 
+import argparse
+import hashlib
+import json
 from pathlib import Path
 
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression, Ridge
+from sklearn.dummy import DummyRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
@@ -16,8 +20,6 @@ from sklearn.preprocessing import StandardScaler
 
 ROOT = Path(__file__).resolve().parents[1]
 TRAIN_FILE = ROOT / "data" / "preprocessed" / "train.csv"
-MODEL_FILE = ROOT / "models" / "training_candidates.joblib"
-RESULTS_FILE = ROOT / "results" / "training_metrics.csv"
 
 ALPHAS = [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]
 IDENTIFIER_COLUMNS = ["team_id", "team", "target_season"]
@@ -62,7 +64,7 @@ def evaluate(y_true, y_pred):
     }
 
 
-def train_candidates(X_train, y_train):
+def train_candidates(X_train, y_train, alphas):
     models = {}
     rows = []
 
@@ -75,9 +77,23 @@ def train_candidates(X_train, y_train):
         **evaluate(y_train, baseline_predictions),
     })
 
+    # checks how much the features add beyond a constant training average prediction.
+    mean_model = Pipeline([
+        ("scale", StandardScaler()),
+        ("regression", DummyRegressor(strategy="mean")),
+    ])
+    mean_model.fit(X_train, y_train)
+    models["training_mean_baseline"] = mean_model
+    rows.append({
+        "model": "training_mean_baseline",
+        "alpha": None,
+        "split": "train",
+        **evaluate(y_train, mean_model.predict(X_train)),
+    })
+
     # train ordinary regression once, then a separate Ridge model for each alpha.
     candidates = [("linear_regression", None)] + [
-        (f"ridge_alpha_{alpha:g}", alpha) for alpha in ALPHAS
+        (f"ridge_alpha_{alpha:g}", alpha) for alpha in alphas
     ]
     for name, alpha in candidates:
         model = training(X_train, y_train, alpha)
@@ -95,22 +111,45 @@ def train_candidates(X_train, y_train):
 
 
 def main():
-    X_train, y_train = load_training_data()
-    models, results = train_candidates(X_train, y_train)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--run", default="v1", help="Name for this experiment, e.g. v2")
+    parser.add_argument("--alphas", nargs="+", type=float, default=ALPHAS)
+    args = parser.parse_args()
+    if not args.run or any(character not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for character in args.run):
+        parser.error("Run names can contain only letters, numbers, underscores, and hyphens.")
+    if not all(np.isfinite(alpha) and alpha > 0 for alpha in args.alphas):
+        parser.error("Alphas must be positive finite numbers.")
+    alphas = list(dict.fromkeys(args.alphas))
+    model_file = ROOT / "models" / args.run / "training_candidates.joblib"
+    results_dir = ROOT / "results" / "train" / args.run
+    if model_file.exists() or results_dir.exists():
+        parser.error("This training run already exists. Use a new --run name to preserve it.")
 
-    MODEL_FILE.parent.mkdir(parents=True, exist_ok=True)
-    RESULTS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    X_train, y_train = load_training_data()
+    models, results = train_candidates(X_train, y_train, alphas)
+
+    model_file.parent.mkdir(parents=True, exist_ok=True)
+    results_dir.mkdir(parents=True, exist_ok=True)
+    metadata = {
+        "run": args.run,
+        "alphas": alphas,
+        "training_file_sha256": hashlib.sha256(TRAIN_FILE.read_bytes()).hexdigest(),
+        "training_examples": len(X_train),
+        "feature_columns": X_train.columns.tolist(),
+        "target_column": TARGET_COLUMN,
+    }
     joblib.dump({
         "models": models,
-        "feature_columns": X_train.columns.tolist(),
-        "alphas": ALPHAS,
-        "target_column": TARGET_COLUMN,
-    }, MODEL_FILE)
-    results.to_csv(RESULTS_FILE, index=False)
+        **metadata,
+    }, model_file)
+    results.to_csv(results_dir / "metrics.csv", index=False)
+    with (results_dir / "config.json").open("w") as file:
+        json.dump(metadata, file, indent=2)
+        file.write("\n")
 
     print(f"Trained {len(models)} candidates on {len(X_train)} examples with {X_train.shape[1]} features.")
     print(results.to_string(index=False, float_format=lambda value: f"{value:.6f}"))
-    print("Saved models/training_candidates.joblib and results/training_metrics.csv.")
+    print(f"Saved models/{args.run}/training_candidates.joblib and results/train/{args.run}/.")
     print("These are training errors only; model selection comes next on validation data.")
 
 
