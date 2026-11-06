@@ -47,4 +47,24 @@ The original v1 outputs are preserved without adding that baseline retroactively
 
 MSE is the selection metric; MAE is also reported. The comparison CSV summarizes
 these two runs and their previous-season baseline. This is validation-driven
-tuning, not independent evidence of final performance. Test data remains reserved.
+tuning, not independent evidence of final performance. Test data was reserved
+through both tuning runs, then evaluated separately as described below.
+
+## Test evaluation
+
+```bash
+.venv/bin/python scripts/test.py --run v2
+```
+
+The test script loads the validation-selected model from the saved run and calls
+`predict` without refitting its weights or scaler. It evaluates only that choice
+and the baselines, not every alpha. All fitted values still come exclusively from
+the 390 training examples. It saves `metrics.csv`, `predictions.csv`, and
+`evaluation.json` under `results/test/v2/`. Rerunning replaces those outputs.
+
+The test contains 90 team-season examples, with target ending years 2024-2026.
+Metrics include MSE, MAE, RMSE (square root of MSE), and RSS (sum of squared
+prediction errors, equal to MSE times the number of examples). None includes
+the Ridge weight penalty. MSE and MAE are the main report metrics; RSS depends
+on sample count. The selected model and alpha are fixed before test evaluation.
+The observed test results should not guide further tuning of this experiment.

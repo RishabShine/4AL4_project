@@ -1,0 +1,14 @@
+{
+  "run": "v2",
+  "selected_model": "ridge_alpha_300",
+  "alpha": 300.0,
+  "refitted": false,
+  "test_examples": 90,
+  "test_target_years": [
+    2024,
+    2025,
+    2026
+  ],
+  "model_file_sha256": "2413e7767a7fab63faf9c07b13d6c9216801019c307637e141dcc88908514590",
+  "test_file_sha256": "e84444bd42586346061bef1730fc01971c49d729a6ed230464768d92597210c8"
+}
