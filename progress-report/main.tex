@@ -24,11 +24,11 @@
 %
 % and set <dim> to something 5cm or larger.
 
-\title{Group X Progress Report:\\My Group's Project Name}
+\title{Group 23 Progress Report:\\Predicting NBA Team Season Win Rate}
 
 
-\author{First Author, Second Author, Third Author \\
-  \texttt{\{macid1,macid2,macid3\}@mcmaster.ca} }
+\author{Evan Burlaca, Rishab Shine \\
+  \texttt{\{burlacae,macid2\}@mcmaster.ca} }
 
 %\author{
 %  \textbf{First Author\textsuperscript{1}},
@@ -75,19 +75,65 @@
 
 \section{Introduction}
 
-Here, write a brief introduction to the problem you are solving. This can be adapted from your problem description and motivation from the original proposal. This should be around 0.25-0.5 pages.
+\
+The goal of this project is to develop a machine learning model that predicts an NBA team's performance in an upcoming season using the previous 3 years of historical team performance together player performance and associated roster continuity. Rather than treating each team's season singularly, the model utilizes the previous 3 years to capture how a team's performance is trending over time. The model seeks to recognize steady improvement, decline, or rebuilding, and how player roster changes may affect that trajectory.
 
-\section{Related Work}
+This problem is significant because predicting future team performance is a task that all top sports betting companies are dedicated to perfecting. A good sports analysis prediction model can mean the difference between a sports betting company making millions of dollars, or losing millions of dollars. The NBA sports betting industry alone hit a record gross revenue of approximately \$17 billion this past year.
 
-Here, talk about the related work you encountered for your approach. Cite at least 5 references. Refer to item 2. No one has done exactly your task? Write about the most similar thing you can find. This should be around 0.25-0.5 pages.
+\section{Related Works}
+
+%Here, talk about the related work you encountered for your approach. Cite at least 5 references. Refer to item 2. No one has done exactly your task? Write about the most similar thing you can find. This should be around 0.25-0.5 pages.
+
+Many independent researchers and sports betting industry monoliths have invested millions of dollars into producing machine learning models capable of predicting NBA season outcomes. Some of these models are listed below.
+
+1. Kishore Annambhotla released a breakdown of his simple singular NBA game prediction ML model in 2025. Annambhotla utilized the random forest classifier algorithm trained on 6 years of historical NBA team statistics to predict the winner of any given NBA match. His final model hovered around  80\% accuracy.
+
+https://medium.com/@k4annam/exploring-machine-learning-predicting-the-nba-607aea31c955
+
+2. Jonah Mergler utilized 20 years of NBA team statistics to produce a classification model capable of predicting the next NBA season winner with an accuracy of a whopping 75\% on test data. Mergler "employed supervised learning techniques such as logistic regressions, LDA, QDA, KNN, random forests, gradient boosting, bagging and support vector machines" to classify potential champions. Ultimately Mergler's model predicted 3 NBA teams to be most likely to win the proceeding 2025 NBA championship. One of Mergler's predicted teams, the Oklahoma City Thunder, ended up victorious.
+
+https://ecommons.udayton.edu/cgi/viewcontent.cgi?article=5494&context=stander_posters
+
+3. Teno Gonzalez Dos Santos and 3 other analysts conducted a variety of machine learning approaches in an attempt to predict game outcomes. Some of the methods they used included the Naive Bayes-based method (67\% accuracy), neural networks (74\% accuracy), maximum entropy principle-based approach(74\% accuracy), and more. They found that "the most
+significant feature influencing game outcome was deemed to be defensive rebounds. Other important factors were three-point percentage, free throws made, and total rebounds.".
+
+We took these findings into account when formulating our dataset and conducting feature engineering.
+
+https://www.ida.liu.se/research/sportsanalytics/projects/conferences/MLSA21-basketball/MLSA21-extended.pdf
+
+Apart from independent analysts, there are hundreds of sports betting companies that invest millions of dollars into machine learning NBA prediction models.
+
+
 
 \section{Dataset}
 
-You should write about your dataset here, following the guidelines regarding item 1. This section may be 0.5-1 pages. Depending on your specific dataset, you may want to include subsections for the preprocessing, annotation, etc.
+%You should write about your dataset here, following the guidelines regarding item 1. This section may be 0.5-1 pages. Depending on your specific dataset, you may want to include subsections for the preprocessing, annotation, etc.
+
+The dataset we utilize to train, validate and test our model is the NBA Stats (1947–present) dataset published by Sumitro Datta on Kaggle.
+https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats
+
+The dataset contains regular-season NBA statistics collected from Basketball-Reference and contains a total of 22 CSV files. The dataset details team and player season statistics, per-game/per-possession/per-minute statistics, and more.
+
+Up until this point in the project, the sole file we have operated on is the Team Summaries.csv file. Each row in this CSV file contains the NBA team name and year, number of wins, simple rating system(SRS), offensive rating, defensive rating, true shooting percentage and more. Note that these features describe only the historical statistics of an NBA team's given season performance, and does not yet account for individual player performance. Player performance feature engineering will be implemented in the final submission.
 
 \section{Features}
 
-Describe any features you used for your model, or how your data was input to your model. Are you doing feature engineering or feature selection? Are you learning embeddings? Is it all part of one neural network? Refer to item 2. This may range from 0.25 pages to 0.5 pages.
+%Describe any features you used for your model, or how your data was input to your model. Are you doing feature engineering or feature selection? Are you learning embeddings? Is it all part of one neural network? Refer to item 2. This may range from 0.25 pages to 0.5 pages.
+
+During preprocessing, we utilize the Team Summaries.csv file to produce the following features that are used in training, validation and testing:
+\begin{itemize}
+\item Win Percentage
+\item Offensive Rating
+\item Defensive Rating
+\item Effective Field Goal Percentage
+\item Turnover Percentage
+\item Offensive Rebound Percennatge
+\item Defensive Rebound Percennatge
+\end{itemize}
+This is a total of 7 features for each NBA season (year). Since we are looking at historical data across 3 years, that makes a total of 21 features.
+
+In addition to these features, we use feature engineering on the data in our dataset to produce 2 additional features: Win percentage change and Net Rating change from the (t-2)th year to the (t-1)th year. This means means we consider a total of 23 features.
+
 
 \section{Implementation}
 
