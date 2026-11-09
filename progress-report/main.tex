@@ -24,6 +24,8 @@
 %
 % and set <dim> to something 5cm or larger.
 
+\usepackage{xurl} % For URL formatting
+
 \title{Group 23 Progress Report:\\Predicting NBA Team Season Win Rate}
 
 
@@ -88,25 +90,19 @@ This problem is significant because predicting future team performance is a task
 Many independent researchers and sports betting industry monoliths have invested millions of dollars into producing machine learning models capable of predicting NBA season outcomes. Some of these models are listed below.
 \medskip
 
-1. Kishore Annambhotla released a breakdown of his simple singular NBA game prediction ML model in 2025. Annambhotla utilized the random forest classifier algorithm trained on 6 years of historical NBA team statistics to predict the winner of any given NBA match. His final model hovered around  80\% accuracy.
-
-https://medium.com/@k4annam/exploring-machine-learning-predicting-the-nba-607aea31c955
+1)  Kishore Annambhotla released a breakdown of his simple singular NBA game prediction ML model in 2025. \citep{Annambhotla2025}. Annambhotla utilized the random forest classifier algorithm trained on 6 years of historical NBA team statistics to predict the winner of any given NBA match. His final model hovered around  80\% accuracy.
 \medskip
 
-2. Jonah Mergler utilized 20 years of NBA team statistics to produce a classification model capable of predicting the next NBA season winner with an accuracy of a whopping 75\% on test data. Mergler "employed supervised learning techniques such as logistic regressions, LDA, QDA, KNN, random forests, gradient boosting, bagging and support vector machines" to classify potential champions. Ultimately Mergler's model predicted 3 NBA teams to be most likely to win the proceeding 2025 NBA championship. One of Mergler's predicted teams, the Oklahoma City Thunder, ended up victorious.
-
-https://ecommons.udayton.edu/cgi/viewcontent.cgi?article=5494&context=stander_posters
+2)  Jonah Mergler utilized 20 years of NBA team statistics to produce a classification model capable of predicting the next NBA season winner with an accuracy of a whopping 75\% on test data. \citep{Mergler2025}. Mergler "employed supervised learning techniques such as logistic regressions, LDA, QDA, KNN, random forests, gradient boosting, bagging and support vector machines" to classify potential champions. Ultimately Mergler's model predicted 3 NBA teams to be most likely to win the proceeding 2025 NBA championship. One of Mergler's predicted teams, the Oklahoma City Thunder, ended up victorious.
 \medskip
 
-3. Teno Gonzalez Dos Santos and 3 other analysts conducted a variety of machine learning approaches in an attempt to predict game outcomes. Some of the methods they used included the Naive Bayes-based method (67\% accuracy), neural networks (74\% accuracy), maximum entropy principle-based approach(74\% accuracy), and more. They found that "the most
+3)  Teno Gonzalez Dos Santos and 3 other analysts conducted a variety of machine learning approaches in an attempt to predict game outcomes. \citep{GonzalezDosSantos2022}. Some of the methods they used included the Naive Bayes-based method (67\% accuracy), neural networks (74\% accuracy), maximum entropy principle-based approach(74\% accuracy), and more. They found that "the most
 significant feature influencing game outcome was deemed to be defensive rebounds. Other important factors were three-point percentage, free throws made, and total rebounds.".
 
 We took these findings into account when formulating our dataset and conducting feature engineering.
-
-https://www.ida.liu.se/research/sportsanalytics/projects/conferences/MLSA21-basketball/MLSA21-extended.pdf
 \medskip
 
-4. In 2020, Cal Reynolds employed four different machine learning techniques to discover which technique produced the most accurate NBA win rate predictions for the 2021 NBA season. Cal Reynolds tested:
+4)  In 2020, Cal Reynolds employed four different machine learning techniques to discover which technique produced the most accurate NBA win rate predictions for the 2021 NBA season. \citep{Reynolds2021}. Cal Reynolds tested:
 \begin{itemize}
 \item Linear Regression on a 2000-2020 Dataset
 \item Linear Regression on a 2010-2020 Dataset
@@ -114,13 +110,9 @@ https://www.ida.liu.se/research/sportsanalytics/projects/conferences/MLSA21-bask
 \item Neural Networks on a 2010-2020 Dataset
 \end{itemize}
 The best performing model ended up being the linear regression model trained on the 2000-2020 dataset, with linear regression performed on the 2010-2020 dataset showing very similar performance.
-
-https://calreynolds.medium.com/using-machine-learning-to-predict-nba-team-wins-part-2-95fbbc271d78
 \medskip
 
-5. In 2021, Christophe Brown attempted to employ Support Vector Machine models to predict NBA game outcomes. Brown considered only team data, and produced a model that correctly predicted NBA games only 58.42\% of the time in the 2021-22 NBA season.
-
-https://towardsdatascience.com/attempting-to-predict-the-result-of-an-nba-game-before-you-could-finish-watching-the-first-half-4a1a97cfa31b/
+5)  In 2021, Christophe Brown attempted to employ Support Vector Machine models to predict NBA game outcomes. \citep{Brown2022}. Brown considered only team data, and produced a model that correctly predicted NBA games only 58.42\% of the time in the 2021-22 NBA season.
 \medskip
 
 Apart from the independent analysts noted above, there are hundreds of sports betting companies that invest millions of dollars into extremely complex machine learning NBA prediction models. Unfortunately most of these companies do not reveal their machine learning model techniques to the public.
@@ -133,9 +125,12 @@ Apart from the independent analysts noted above, there are hundreds of sports be
 %You should write about your dataset here, following the guidelines regarding item 1. This section may be 0.5-1 pages. Depending on your specific dataset, you may want to include subsections for the preprocessing, annotation, etc.
 
 The dataset we utilize to train, validate and test our model is the NBA Stats (1947–present) dataset published by Sumitro Datta on Kaggle.
-https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats
+
+\url{https://www.kaggle.com/datasets/sumitrodatta/nba-aba-baa-stats}
+\medskip
 
 The dataset contains regular-season NBA statistics collected from Basketball-Reference and contains a total of 22 CSV files. The dataset details team and player season statistics, per-game/per-possession/per-minute statistics, and more.
+\medskip
 
 Up until this point in the project, the sole file we have operated on is the Team Summaries.csv file. Each row in this CSV file contains the NBA team name and year, number of wins, simple rating system(SRS), offensive rating, defensive rating, true shooting percentage and more. Note that these features describe only the historical statistics of an NBA team's given season performance, and does not yet account for individual player performance. Player performance feature engineering will be implemented in the final submission.
 
@@ -150,10 +145,11 @@ During preprocessing, we utilize the Team Summaries.csv file to produce the foll
 \item Defensive Rating
 \item Effective Field Goal Percentage
 \item Turnover Percentage
-\item Offensive Rebound Percennatge
-\item Defensive Rebound Percennatge
+\item Offensive Rebound Percentage
+\item Defensive Rebound Percentage
 \end{itemize}
 This is a total of 7 features for each NBA season (year). Since we are looking at historical data across 3 years, that makes a total of 21 features.
+\medskip
 
 In addition to these features, we use feature engineering on the data in our dataset to produce 2 additional features: Win percentage change and Net Rating change from the (t-2)th year to the (t-1)th year. This means means we consider a total of 23 features.
 
@@ -161,7 +157,11 @@ In addition to these features, we use feature engineering on the data in our dat
 \section{Implementation}
 
 Our implementation uses Python and scikit-learn to train the regression models. All of our scripts are found under the scripts folder, the code is separated into training, validation, and testing scripts so that model fitting, model selection, and final evaluation have distinct roles and corresponding output files for easier understanding and readability. Each model receives the 23 historical features described in the Features section. Team identifiers and target season identifiers are excluded from the numerical inputs, while the actual target-season win percentage is separated as the label.
+\medskip
+
 We implemented ordinary linear regression as an initial learned comparison and Ridge regression as our primary approach. Both predict win percentage as a weighted combination of the input features plus an intercept. Ridge is appropriate because several historical basketball statistics contain overlapping information, and measurements of the same statistic across consecutive seasons may also be correlated. Regularization discourages excessively large coefficients, which can reduce overfitting and improve performance on unseen seasons.
+\medskip
+
 Before fitting each regression model, we standardize its inputs using scikit-learn’s StandardScaler. Each feature is transformed by subtracting its training set mean and dividing by its training set standard deviation. This is important because our features have different numerical scales, which would otherwise affect how Ridge penalizes their coefficients, for example win percentage might be around 0.6, and offensive rating might be around 110, standardisation makes Ridge’s weight penalty work across the different features. We combine the scaler and regression estimator in a Pipeline. The pipeline learns scaling values only from training examples and applies those same values when predicting validation and test examples.
 For a standardized feature vector $z_i$, the regression prediction is:
 
@@ -174,84 +174,50 @@ Here, $b$ is the intercept and $w_j$ is the learned coefficient for feature $j$.
 \sum_{i=1}^{n}(y_i-\hat{y}_i)^2+\alpha\sum_{j=1}^{23}w_j^2.
 \]
 The first term measures squared prediction error on the training examples, while the second penalizes large feature coefficients.The hyperparameter $\alpha$ controls the strength of regularization: larger values place greater pressure on coefficients to remain small. Parameter fitting is handled by scikit-learn’s numerical regression solver rather than a manually implemented gradient-descent procedure.
+\medskip
+
 Our initial experiment trained separate Ridge candidates using $\alpha$ values of 0.01, 0.1, 1, 10, 100, and 1000. Each candidate used the same training examples but learned its own coefficients under a different penalty strength. Ordinary linear regression was also fitted without a regularization penalty. For comparison, we implemented a previous season baseline that repeats each team’s previous win percentage and, in the second experiment, a constant baseline that predicts the mean training set target.
+\medskip
+
 The validation script loads the fitted pipelines and predicts outcomes for the validation examples, it does not update their coefficients or scaling values. Candidates are compared using validation mean squared error, with mean absolute error recorded as an additional measure. The initial search selected $\alpha=1000$, the largest value tested. Because the best result occurred at the search boundary (our max $\alpha$), we expanded the experiment to include 300, 3000, 10000, and 100000 while retaining the original candidates. This comparison selected $\alpha=300$ by validation MSE, larger penalties eventually worsened performance.
+\medskip
+
 After selection, the testing script evaluates the saved $\alpha=300$ model and the baselines on the reserved test examples. Testing measures the performance of the chosen model. Each experiment saves its fitted models, settings, metrics, and individual predictions, allowing us to reproduce the analysis and compare experiments.
+
 
 \section{Results and Evaluation}
 
-How are you evaluating your model? What results do you have so far? What are your baselines? Refer to item 5. This may take around 0.5 pages.
+We evaluate our models using mean squared error (MSE) and mean absolute error (MAE). MSE describes the average squared difference between an NBA team's predicted win percentage and its actual win percentage; MSE penalizes larger prediction errors more heavily, as compared to MAE. MAE describes the average absolute value difference between NBA win percentage predictions and actual values. A model that performs better will have a lower MSE and a lower MAE.
+\medskip
+
+We utilized train, validation and test splits to create, tune, and evaluate our model. To evaluate our chosen Ridge regression model (using the selected regularization parameter of $\alpha$ = 300), we compare the model to two baseline prediction models:
+
+The first is a "previous-season" baseline. This prediction model predicts that a team will perform identically to how it performed in the previous season.
+
+The second is a "constant" baseline. This prediction model predicts that every team will perform identically with average performance: a 0.5 win rate.
+\medskip
+
+If our model is performing up to par, it should outperform both of the baselines listed above.
+
+\begin{table}[t]
+    \centering
+    \small
+    \begin{tabular}{lcc}
+        \hline
+        \textbf{Model} & \textbf{Test MSE} & \textbf{Test MAE} \\
+        \hline
+        Ridge Regression ($\alpha=300$) & 0.0176 & 0.109 \\
+        Previous-Season Baseline & 0.0216 & 0.114 \\
+        Training-Mean Baseline & 0.0264 & 0.136 \\
+        \hline
+    \end{tabular}
+    \caption{Performance comparison of Ridge Regression ($\alpha = 300$) against two baseline prediction methods}
+    \label{tab:model_results}
+\end{table}
 
 \section{Feedback and Plans}
 
 Write about your plans for the remainder of the project. This should include a discussion of the feedback you received from your TA, and how you plan to improve your approach. Reflect on your implementation and areas for improvement. Refer to item 6. This may be around 0.5 pages.
-
-\subsection{Tables and figures}
-
-See Table~\ref{citation-guide} for an example of a table and its caption.
-See Figure~\ref{fig:experiments} for an example of a figure and its caption.
-
-
-\begin{figure}[t]
-  \includegraphics[width=\columnwidth]{example-image-golden}
-  \caption{A figure with a caption that runs for more than one line.
-    Example image is usually available through the \texttt{mwe} package
-    without even mentioning it in the preamble.}
-  \label{fig:experiments}
-\end{figure}
-
-\begin{figure*}[t]
-  \includegraphics[width=0.48\linewidth]{example-image-a} \hfill
-  \includegraphics[width=0.48\linewidth]{example-image-b}
-  \caption {A minimal working example to demonstrate how to place
-    two images side-by-side.}
-\end{figure*}
-
-
-\subsection{Citations}
-
-\begin{table*}
-  \centering
-  \begin{tabular}{lll}
-    \hline
-    \textbf{Output}           & \textbf{natbib command} & \textbf{ACL only command} \\
-    \hline
-    \citep{Gusfield:97}       & \verb|\citep|           &                           \\
-    \citealp{Gusfield:97}     & \verb|\citealp|         &                           \\
-    \citet{Gusfield:97}       & \verb|\citet|           &                           \\
-    \citeyearpar{Gusfield:97} & \verb|\citeyearpar|     &                           \\
-    \citeposs{Gusfield:97}    &                         & \verb|\citeposs|          \\
-    \hline
-  \end{tabular}
-  \caption{\label{citation-guide}
-    Citation commands supported by the style file.
-  }
-\end{table*}
-
-Table~\ref{citation-guide} shows the syntax supported by the style files.
-We encourage you to use the natbib styles.
-You can use the command \verb|\citet| (cite in text) to get ``author (year)'' citations, like this citation to a paper by \citet{Gusfield:97}.
-You can use the command \verb|\citep| (cite in parentheses) to get ``(author, year)'' citations \citep{Gusfield:97}.
-You can use the command \verb|\citealp| (alternative cite without parentheses) to get ``author, year'' citations, which is useful for using citations within parentheses (e.g. \citealp{Gusfield:97}).
-
-\subsection{References}
-
-\nocite{Ando2005,andrew2007scalable,rasooli-tetrault-2015}
-
-Many websites where you can find academic papers also allow you to export a bib file for citation or bib formatted entry. Copy this into the \texttt{custom.bib} and you will be able to cite the paper in the \LaTeX{}. You can remove the example entries.
-
-\subsection{Equations}
-
-An example equation is shown below:
-\begin{equation}
-  \label{eq:example}
-  A = \pi r^2
-\end{equation}
-
-Labels for equation numbers, sections, subsections, figures and tables
-are all defined with the \verb|\label{label}| command and cross references
-to them are made with the \verb|\ref{label}| command.
-This an example cross-reference to Equation~\ref{eq:example}. You can also write equations inline, like this: $A=\pi r^2$.
 
 
 % \section*{Limitations}
