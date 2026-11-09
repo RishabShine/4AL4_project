@@ -160,7 +160,23 @@ In addition to these features, we use feature engineering on the data in our dat
 
 \section{Implementation}
 
-Describe your model and implementation here. Refer to item 4. This may take around a page.
+Our implementation uses Python and scikit-learn to train the regression models. All of our scripts are found under the scripts folder, the code is separated into training, validation, and testing scripts so that model fitting, model selection, and final evaluation have distinct roles and corresponding output files for easier understanding and readability. Each model receives the 23 historical features described in the Features section. Team identifiers and target season identifiers are excluded from the numerical inputs, while the actual target-season win percentage is separated as the label.
+We implemented ordinary linear regression as an initial learned comparison and Ridge regression as our primary approach. Both predict win percentage as a weighted combination of the input features plus an intercept. Ridge is appropriate because several historical basketball statistics contain overlapping information, and measurements of the same statistic across consecutive seasons may also be correlated. Regularization discourages excessively large coefficients, which can reduce overfitting and improve performance on unseen seasons.
+Before fitting each regression model, we standardize its inputs using scikit-learn’s StandardScaler. Each feature is transformed by subtracting its training set mean and dividing by its training set standard deviation. This is important because our features have different numerical scales, which would otherwise affect how Ridge penalizes their coefficients, for example win percentage might be around 0.6, and offensive rating might be around 110, standardisation makes Ridge’s weight penalty work across the different features. We combine the scaler and regression estimator in a Pipeline. The pipeline learns scaling values only from training examples and applies those same values when predicting validation and test examples.
+For a standardized feature vector $z_i$, the regression prediction is:
+
+\[
+\hat{y}_i=b+\sum_{j=1}^{23}w_jz_{ij}.
+\]
+Here, $b$ is the intercept and $w_j$ is the learned coefficient for feature $j$. Ridge learns these parameters by minimizing:
+
+\[
+\sum_{i=1}^{n}(y_i-\hat{y}_i)^2+\alpha\sum_{j=1}^{23}w_j^2.
+\]
+The first term measures squared prediction error on the training examples, while the second penalizes large feature coefficients.The hyperparameter $\alpha$ controls the strength of regularization: larger values place greater pressure on coefficients to remain small. Parameter fitting is handled by scikit-learn’s numerical regression solver rather than a manually implemented gradient-descent procedure.
+Our initial experiment trained separate Ridge candidates using $\alpha$ values of 0.01, 0.1, 1, 10, 100, and 1000. Each candidate used the same training examples but learned its own coefficients under a different penalty strength. Ordinary linear regression was also fitted without a regularization penalty. For comparison, we implemented a previous season baseline that repeats each team’s previous win percentage and, in the second experiment, a constant baseline that predicts the mean training set target.
+The validation script loads the fitted pipelines and predicts outcomes for the validation examples, it does not update their coefficients or scaling values. Candidates are compared using validation mean squared error, with mean absolute error recorded as an additional measure. The initial search selected $\alpha=1000$, the largest value tested. Because the best result occurred at the search boundary (our max $\alpha$), we expanded the experiment to include 300, 3000, 10000, and 100000 while retaining the original candidates. This comparison selected $\alpha=300$ by validation MSE, larger penalties eventually worsened performance.
+After selection, the testing script evaluates the saved $\alpha=300$ model and the baselines on the reserved test examples. Testing measures the performance of the chosen model. Each experiment saves its fitted models, settings, metrics, and individual predictions, allowing us to reproduce the analysis and compare experiments.
 
 \section{Results and Evaluation}
 
