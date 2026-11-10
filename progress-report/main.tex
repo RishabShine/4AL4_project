@@ -25,12 +25,13 @@
 % and set <dim> to something 5cm or larger.
 
 \usepackage{xurl} % For URL formatting
+\usepackage{float} % To orient table
 
-\title{Group 23 Progress Report:\\Predicting NBA Team Season Win Rate}
+\title{Group 23 Progress Report:\\Predicting NBA Teams' Season Win Rate}
 
 
 \author{Evan Burlaca, Rishab Shine \\
-  \texttt{\{burlacae,macid2\}@mcmaster.ca} }
+  \texttt{\{burlacae,shiner\}@mcmaster.ca} }
 
 %\author{
 %  \textbf{First Author\textsuperscript{1}},
@@ -148,7 +149,11 @@ During preprocessing, we utilize the Team Summaries.csv file to produce the foll
 \item Offensive Rebound Percentage
 \item Defensive Rebound Percentage
 \end{itemize}
+
 This is a total of 7 features for each NBA season (year). Since we are looking at historical data across 3 years, that makes a total of 21 features.
+\medskip
+
+We selected these features in particular because multiple related works listed these features as being highly correlated to an NBA team's win rate/success.
 \medskip
 
 In addition to these features, we use feature engineering on the data in our dataset to produce 2 additional features: Win percentage change and Net Rating change from the (t-2)th year to the (t-1)th year. This means means we consider a total of 23 features.
@@ -162,7 +167,7 @@ Our implementation uses Python and scikit-learn to train the regression models. 
 We implemented ordinary linear regression as an initial learned comparison and Ridge regression as our primary approach. Both predict win percentage as a weighted combination of the input features plus an intercept. Ridge is appropriate because several historical basketball statistics contain overlapping information, and measurements of the same statistic across consecutive seasons may also be correlated. Regularization discourages excessively large coefficients, which can reduce overfitting and improve performance on unseen seasons.
 \medskip
 
-Before fitting each regression model, we standardize its inputs using scikit-learn’s StandardScaler. Each feature is transformed by subtracting its training set mean and dividing by its training set standard deviation. This is important because our features have different numerical scales, which would otherwise affect how Ridge penalizes their coefficients, for example win percentage might be around 0.6, and offensive rating might be around 110, standardisation makes Ridge’s weight penalty work across the different features. We combine the scaler and regression estimator in a Pipeline. The pipeline learns scaling values only from training examples and applies those same values when predicting validation and test examples.
+Before fitting each regression model, we standardize its inputs using scikit-learn’s StandardScaler. Each feature is transformed by subtracting its training set mean and dividing by its training set standard deviation. This is important because our features have different numerical scales, which would otherwise affect how Ridge penalizes their coefficients, for example win percentage might be around 0.6, and offensive rating might be around 110, standardization makes Ridge’s weight penalty work across the different features. We combine the scaler and regression estimator in a Pipeline. The pipeline learns scaling values only from training examples and applies those same values when predicting validation and test examples.
 For a standardized feature vector $z_i$, the regression prediction is:
 
 \[
@@ -191,6 +196,8 @@ We evaluate our models using mean squared error (MSE) and mean absolute error (M
 \medskip
 
 We utilized train, validation and test splits to create, tune, and evaluate our model. To evaluate our chosen Ridge regression model (using the selected regularization parameter of $\alpha$ = 300), we compare the model to two baseline prediction models:
+\medskip
+
 
 The first is a "previous-season" baseline. This prediction model predicts that a team will perform identically to how it performed in the previous season.
 
@@ -199,7 +206,7 @@ The second is a "constant" baseline. This prediction model predicts that every t
 
 If our model is performing up to par, it should outperform both of the baselines listed above.
 
-\begin{table}[t]
+\begin{table}[H]
     \centering
     \small
     \begin{tabular}{lcc}
@@ -207,24 +214,47 @@ If our model is performing up to par, it should outperform both of the baselines
         \textbf{Model} & \textbf{Test MSE} & \textbf{Test MAE} \\
         \hline
         Ridge Regression ($\alpha=300$) & 0.0176 & 0.109 \\
-        Previous-Season Baseline & 0.0216 & 0.114 \\
-        Training-Mean Baseline & 0.0264 & 0.136 \\
+        Previous Season Baseline & 0.0216 & 0.114 \\
+        Constant Baseline & 0.0264 & 0.136 \\
         \hline
     \end{tabular}
     \caption{Performance comparison of Ridge Regression ($\alpha = 300$) against two baseline prediction methods}
     \label{tab:model_results}
 \end{table}
 
+Our ridge regression model with $\alpha = 300$ had a test MSE of 0.0176 and a test MAE of 0.109. Compared to our baseline methods, our ridge regression model performs better. This is evident as it has a lower MSE and MAE than both of the given baseline methods.
+\medskip
+
+Overall, these results of our ridge regression model provide an initial assessment of how effective historical NBA team statistics can be to predict future NBA win percentages. However, note that our current implementation only incorporates team-level statistics and does not yet account for individual player performance or roster continuity. The model is expected to perform even better when this data is ultimately utilized in our model.
+
 \section{Feedback and Plans}
 
-Write about your plans for the remainder of the project. This should include a discussion of the feedback you received from your TA, and how you plan to improve your approach. Reflect on your implementation and areas for improvement. Refer to item 6. This may be around 0.5 pages.
+%Write about your plans for the remainder of the project. This should include a discussion of the feedback you received from your TA, and how you plan to improve your approach. Reflect on your implementation and areas for improvement. Refer to item 6. This may be around 0.5 pages.
+
+Our TA advised us to experiment with feature selection to enhance the performance of our model. He encouraged us to try to add and remove features from our regression model and observe which feature combinations produce the lowest MSE and MAE, to get a better understanding of which features are relevant and which are not.
+We plan to improve our model for the final submission by implementing the following:
+\medskip
+
+1) Using feature selection techniques to determine which features have the largest positive/negative correlation with the win rate. This will help to remove unnecessary features and add useful features, thereby improving the accuracy of our model.
+\medskip
+
+2) Adding associated player data for each NBA team to our set of features.
+
+Although a team's win rate may be trending upwards by evidence of a team's historical data, if that team were to lose its star player(s) in the following season, said team would likely underperform the prediction of our model. Thus an improvement in accuracy can theoretically be achieved by considering player data and roster continuity in addition to team data.
+
+For example, this could be achieved by adding 1-3 features of the top 3 highest-scoring players on every NBA team. This would add 3-9 features to our current total of 23 features.
 
 
 % \section*{Limitations}
 
 \section*{Team Contributions}
+Both group members contributed to all sections of the project in some way. The group members' primary endeavors are summarized below.
+\medskip
 
-Write in this section a few sentences describing the contributions of each team member. What did each member work on? Refer to item 7.
+Evan Burlaca(MacID: burlacae): Focused on data preprocessing and feature engineering. Worked on all parts of the progress report excluding the Introduction and Implementation sections (1 and 5).
+\medskip
+
+Rishab Shine(MacID: shiner): Focused on the train, validation, and test splits. Completed the Introduction and Implementation sections (1 and 5) of the progress report.
 
 % Bibliography entries for the entire Anthology, followed by custom entries
 %\bibliography{custom,anthology-overleaf-1,anthology-overleaf-2}
